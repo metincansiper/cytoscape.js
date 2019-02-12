@@ -593,26 +593,28 @@ var boundingBoxImpl = function( ele, options ){
 
       // handle node dimensions
       /////////////////////////
-      
-      var stateAndInfos = ele._private.data.statesandinfos;
+
+      var states = ele._private.data.sites;
       var minY, maxY, minX, maxX;
-      
-      for (var i = 0; stateAndInfos && i < stateAndInfos.length; i++) {
-        var state = stateAndInfos[i];
-        if(!state.isDisplayed) {
-          continue;
-        }
+
+      for (var i = 0; states && i < states.length; i++) {
+        var state = states[i];
+
         var stateWidth = state.bbox.w;
         var stateHeight = state.bbox.h;
-        var coords = ele.cy().scratch('_sbgnviz').sbgnvizParams.classes.StateVariable.getAbsoluteCoord(state, ele.cy());
+        // site.bbox represents center-left position of infoboxes
+        // so it is needed to add site.bbox.w / 2 here while computing
+        // 'x' coordinate of center of infobox here
+        var stateX = x + w * state.bbox.x + state.bbox.w / 2;
+        var stateY = y + h * state.bbox.y;
         var bw = ele.pstyle( 'border-width' ).pfValue;
 
-        var stateMinY = coords.y - stateHeight / 2 - bw;
-        var stateMaxY = coords.y + stateHeight / 2 + bw;
-        
-        var stateMinX = coords.x - stateWidth / 2 - bw;
-        var stateMaxX = coords.x + stateWidth / 2 + bw;
-        
+        var stateMinY = stateY - stateHeight / 2 - bw;
+        var stateMaxY = stateY + stateHeight / 2 + bw;
+
+        var stateMinX = stateX - stateWidth / 2 - bw;
+        var stateMaxX = stateX + stateWidth / 2 + bw;
+
         if(!minY || stateMinY < minY) {
           minY = stateMinY;
         }
